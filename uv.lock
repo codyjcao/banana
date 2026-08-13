@@ -158,12 +158,23 @@ source = { virtual = "." }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "requests" },
+    { name = "tagged-enum" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.15.0" },
     { name = "requests", specifier = ">=2.34.2" },
+    { name = "tagged-enum", specifier = ">=1.0.0" },
+]
+
+[[package]]
+name = "tagged-enum"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/40/79715b7080884b23345a8bcbe9a01c269c901f446af515d73c318eed6db0/tagged_enum-1.0.0.tar.gz", hash = "sha256:15f717d4e28b0e5694ba078d7e10017412a4bc9ffbd2b07a89db9d11eda5a3b2", size = 14080, upload-time = "2026-07-28T00:46:01.848Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/56/8e2c36d515d3cb5ce6a4c8427ec6240f8c568f137539348be599db2ad9af/tagged_enum-1.0.0-py3-none-any.whl", hash = "sha256:94baa9792693dae9862c52c952423babb679a83175e6ed9b0aa6b97650063bc1", size = 8004, upload-time = "2026-07-28T00:46:00.621Z" },
 ]
 
 [[package]]

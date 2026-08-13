@@ -7,4 +7,5 @@ from typing import Protocol
 
 
 class ParserPrimitives[UnparsedItem, ParsedItem](Protocol):
-    async def parse(self, unparsed: UnparsedItem) -> ParsedItem: ...
+    @staticmethod
+    def parse(raw: UnparsedItem) -> ParsedItem: ...

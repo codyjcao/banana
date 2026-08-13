@@ -7,5 +7,6 @@ from typing import Protocol
 
 
 class DifferencerPrimitives[Item, Difference](Protocol):
-    async def difference(self, old_item: Item, new_item: Item) -> Difference:
+    @staticmethod
+    def difference(old_item: Item, new_item: Item) -> Difference:
         ...

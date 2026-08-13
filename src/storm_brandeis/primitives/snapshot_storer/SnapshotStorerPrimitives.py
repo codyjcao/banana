@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+__all__ = ("SnapshotStorerPrimitives",)
+
 from typing import Protocol
 
 

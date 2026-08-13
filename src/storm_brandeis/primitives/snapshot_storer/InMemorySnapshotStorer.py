@@ -4,7 +4,7 @@
 from .SnapshotStorerPrimitives import SnapshotStorerPrimitives
 
 
-class InMemorySnapshotStorer[Item](SnapshotStorerPrimitives):
+class InMemorySnapshotStorer[Item](SnapshotStorerPrimitives[Item]):
     def __init__(self, snapshot: Item | None = None):
         self.__snapshot = snapshot
 
