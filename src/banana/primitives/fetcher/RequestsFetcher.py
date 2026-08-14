@@ -3,11 +3,15 @@
 
 __all__ = ("RequestsFetcher",)
 
+import logging
 from typing import Any
 
 import requests
 
 from .FetcherPrimitives import FetcherPrimitives
+
+
+logger = logging.getLogger(__name__)
 
 
 class RequestsFetcher(FetcherPrimitives[str]):
@@ -21,5 +25,10 @@ class RequestsFetcher(FetcherPrimitives[str]):
             self.__url,
             data=self.__payload,
             timeout=self.__timeout,
+        )
+        logger.info(
+            "Fetched schedule from %s with status %s",
+            self.__url,
+            response.status_code,
         )
         return response.text
