@@ -4,11 +4,15 @@
 __all__ = ("DualCadenceAvailabilityMonitor",)
 
 import asyncio
+import logging
 
 from banana.primitives import FetcherPrimitives, ParserPrimitives
 
 from .RolloverTracker import RolloverTracker
 from .ScheduleChecker import ScheduleChecker
+
+
+logger = logging.getLogger(__name__)
 
 
 class DualCadenceAvailabilityMonitor[
@@ -31,6 +35,10 @@ class DualCadenceAvailabilityMonitor[
         self.__poll_interval_seconds = poll_interval_seconds
 
     async def run(self) -> None:
+        logger.info(
+            "Starting availability monitor with %s second poll interval",
+            self.__poll_interval_seconds,
+        )
         while True:
             await self.__tick()
             await asyncio.sleep(self.__poll_interval_seconds)
@@ -42,5 +50,8 @@ class DualCadenceAvailabilityMonitor[
         await self.__fast_check.check(parsed)
 
         if await self.__rollover_tracker.has_rolled_over():
+            logger.info("Daily schedule check is due")
             await self.__daily_check.check(parsed)
             await self.__rollover_tracker.mark_run()
+        else:
+            logger.info("Daily schedule check is not due")

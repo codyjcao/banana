@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-import os
 import datetime
+import logging
+import os
 
 from dotenv import load_dotenv
 
@@ -24,6 +25,10 @@ from banana.primitives import (
 
 async def main():
     load_dotenv()
+    logging.basicConfig(
+        level=os.getenv("LOG_LEVEL", "INFO").upper(),
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
 
     email = os.getenv("EMAIL_NAME")
     password = os.getenv("EMAIL_PASSWORD")
@@ -47,13 +52,13 @@ async def main():
     email_notifier_fast = NyUrbanScheduleEmailNotifier(
         sender=email,
         password=password,
-        recipients=["codyjcao@gmail.com"],
+        recipients=["codyjcao@gmail.com", "qlee97@gmail.com"],
         subject="NYUrban Brandeis New Date Drop"
     )
     email_notifier_daily = NyUrbanScheduleEmailNotifier(
         sender=email,
         password=password,
-        recipients=["codyjcao@gmail.com"],
+        recipients=["codyjcao@gmail.com", "qlee97@gmail.com"],
         subject="NYUrban Brandeis Daily Update"
     )
 
@@ -62,6 +67,7 @@ async def main():
         differencer=differencer,
         notifier=email_notifier_fast,
         predicate=lambda updates: any(day.new_date for day in updates),
+        name="new-date check",
     )
 
     daily_check = ScheduleChecker[Schedule.Days, Schedule.DayUpdates](
@@ -69,6 +75,7 @@ async def main():
         differencer=differencer,
         notifier=email_notifier_daily,
         predicate=lambda _: True,
+        name="daily check",
     )
 
     monitor = DualCadenceAvailabilityMonitor[

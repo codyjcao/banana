@@ -3,12 +3,16 @@
 
 __all__ = ("NyUrbanScheduleEmailNotifier",)
 
+import logging
 import smtplib
 from email.message import EmailMessage
 
 from banana.models import Schedule
 
 from .NotifierPrimitives import NotifierPrimitives
+
+
+logger = logging.getLogger(__name__)
 
 
 class NyUrbanScheduleEmailNotifier(
@@ -53,6 +57,12 @@ class NyUrbanScheduleEmailNotifier(
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             smtp.login(self.__sender, self.__password)
             smtp.send_message(message)
+
+        logger.info(
+            "Sent schedule notification '%s' to %s recipient(s)",
+            self.__subject,
+            len(self.__recipients),
+        )
 
     @staticmethod
     def __format_day(day_update: Schedule.DayUpdate) -> str:
