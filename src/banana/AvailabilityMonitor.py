@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from storm_brandeis.primitives import (
+from banana.primitives import (
     SnapshotStorerPrimitives,
     DifferencerPrimitives,
     NotifierPrimitives,

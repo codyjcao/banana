@@ -9,7 +9,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from storm_brandeis.models import Schedule
+from banana.models import Schedule
 
 from .ParserPrimitives import ParserPrimitives
 

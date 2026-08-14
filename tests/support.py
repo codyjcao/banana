@@ -12,7 +12,7 @@ many times a mock method was called.
 from datetime import datetime
 from typing import Generic, TypeVar
 
-from storm_brandeis.models import Schedule
+from banana.models import Schedule
 
 Item = TypeVar("Item")
 

@@ -5,7 +5,7 @@ __all__ = ("DualCadenceAvailabilityMonitor",)
 
 import asyncio
 
-from storm_brandeis.primitives import FetcherPrimitives, ParserPrimitives
+from banana.primitives import FetcherPrimitives, ParserPrimitives
 
 from .RolloverTracker import RolloverTracker
 from .ScheduleChecker import ScheduleChecker

@@ -5,7 +5,7 @@ from datetime import datetime
 
 import pytest
 
-from storm_brandeis.primitives.parser.NyUrbanScheduleParser import (
+from banana.primitives.parser.NyUrbanScheduleParser import (
     NyUrbanScheduleParser,
 )
 

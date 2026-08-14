@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from storm_brandeis.models import Schedule
-from storm_brandeis.primitives.differencer.ScheduleDifferencer import (
+from banana.models import Schedule
+from banana.primitives.differencer.ScheduleDifferencer import (
     ScheduleDifferencer,
 )
 

@@ -5,7 +5,7 @@ __all__ = ("RolloverTracker",)
 
 
 import datetime
-from storm_brandeis.primitives import SnapshotStorerPrimitives
+from banana.primitives import SnapshotStorerPrimitives
 
 
 class RolloverTracker:

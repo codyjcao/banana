@@ -4,8 +4,8 @@
 import asyncio
 from datetime import datetime, timedelta
 
-from storm_brandeis.RolloverTracker import RolloverTracker
-from storm_brandeis.primitives.snapshot_storer.InMemorySnapshotStorer import (
+from banana.RolloverTracker import RolloverTracker
+from banana.primitives.snapshot_storer.InMemorySnapshotStorer import (
     InMemorySnapshotStorer,
 )
 

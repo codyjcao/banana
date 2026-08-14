@@ -5,13 +5,15 @@ import asyncio
 import os
 import datetime
 
-from storm_brandeis import (
+from dotenv import load_dotenv
+
+from banana import (
     DualCadenceAvailabilityMonitor,
     RolloverTracker,
     ScheduleChecker,    
 )
-from storm_brandeis.models import Schedule
-from storm_brandeis.primitives import (
+from banana.models import Schedule
+from banana.primitives import (
     NyUrbanScheduleEmailNotifier,
     InMemorySnapshotStorer,
     NyUrbanScheduleParser,
@@ -21,6 +23,14 @@ from storm_brandeis.primitives import (
 
 
 async def main():
+    load_dotenv()
+
+    email = os.getenv("EMAIL_NAME")
+    password = os.getenv("EMAIL_PASSWORD")
+
+    if email is None or password is None:
+        raise ValueError("Email or password is missing")
+
     fetcher = RequestsFetcher(
         "https://www.nyurban.com/wp-admin/admin-ajax.php",
         {
@@ -35,14 +45,14 @@ async def main():
     parser = NyUrbanScheduleParser()
     differencer = ScheduleDifferencer()
     email_notifier_fast = NyUrbanScheduleEmailNotifier(
-        sender=os.environ["EMAIL_NAME"],
-        password=os.environ["EMAIL_PASSWORD"],
+        sender=email,
+        password=password,
         recipients=["codyjcao@gmail.com"],
         subject="NYUrban Brandeis New Date Drop"
     )
     email_notifier_daily = NyUrbanScheduleEmailNotifier(
-        sender=os.environ["EMAIL_NAME"],
-        password=os.environ["EMAIL_PASSWORD"],
+        sender=email,
+        password=password,
         recipients=["codyjcao@gmail.com"],
         subject="NYUrban Brandeis Daily Update"
     )

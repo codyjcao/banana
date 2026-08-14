@@ -6,7 +6,7 @@ __all__ = ("NyUrbanScheduleEmailNotifier",)
 import smtplib
 from email.message import EmailMessage
 
-from storm_brandeis.models import Schedule
+from banana.models import Schedule
 
 from .NotifierPrimitives import NotifierPrimitives
 

@@ -4,7 +4,7 @@
 __all__ = ("ScheduleDifferencer",)
 
 from datetime import datetime
-from storm_brandeis.models import Schedule
+from banana.models import Schedule
 
 from .DifferencerPrimitives import DifferencerPrimitives
 

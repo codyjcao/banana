@@ -3,15 +3,15 @@
 
 import asyncio
 
-from storm_brandeis.DualCadenceAvailabilityMonitor import (
+from banana.DualCadenceAvailabilityMonitor import (
     DualCadenceAvailabilityMonitor,
 )
-from storm_brandeis.ScheduleChecker import ScheduleChecker
-from storm_brandeis.models import Schedule
-from storm_brandeis.primitives.differencer.ScheduleDifferencer import (
+from banana.ScheduleChecker import ScheduleChecker
+from banana.models import Schedule
+from banana.primitives.differencer.ScheduleDifferencer import (
     ScheduleDifferencer,
 )
-from storm_brandeis.primitives.snapshot_storer.InMemorySnapshotStorer import (
+from banana.primitives.snapshot_storer.InMemorySnapshotStorer import (
     InMemorySnapshotStorer,
 )
 

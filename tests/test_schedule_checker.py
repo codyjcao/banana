@@ -3,8 +3,8 @@
 
 import asyncio
 
-from storm_brandeis.ScheduleChecker import ScheduleChecker
-from storm_brandeis.primitives.snapshot_storer.InMemorySnapshotStorer import (
+from banana.ScheduleChecker import ScheduleChecker
+from banana.primitives.snapshot_storer.InMemorySnapshotStorer import (
     InMemorySnapshotStorer,
 )
 

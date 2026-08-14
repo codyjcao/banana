@@ -5,7 +5,7 @@ __all__ = ("ScheduleChecker",)
 
 from typing import Callable
 
-from storm_brandeis.primitives import (
+from banana.primitives import (
     DifferencerPrimitives,
     NotifierPrimitives,
     SnapshotStorerPrimitives,

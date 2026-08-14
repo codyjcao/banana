@@ -3,11 +3,11 @@
 
 import asyncio
 
-from storm_brandeis.AvailabilityMonitor import AvailabilityMonitor
-from storm_brandeis.primitives.differencer.ScheduleDifferencer import (
+from banana.AvailabilityMonitor import AvailabilityMonitor
+from banana.primitives.differencer.ScheduleDifferencer import (
     ScheduleDifferencer,
 )
-from storm_brandeis.primitives.snapshot_storer.InMemorySnapshotStorer import (
+from banana.primitives.snapshot_storer.InMemorySnapshotStorer import (
     InMemorySnapshotStorer,
 )
 
