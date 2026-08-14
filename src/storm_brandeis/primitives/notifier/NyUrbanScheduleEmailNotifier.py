@@ -12,7 +12,7 @@ from .NotifierPrimitives import NotifierPrimitives
 
 
 class NyUrbanScheduleEmailNotifier(
-    NotifierPrimitives[tuple[Schedule.DayUpdate, ...]]
+    NotifierPrimitives[Schedule.DayUpdates]
 ):
     def __init__(
         self,
@@ -26,7 +26,7 @@ class NyUrbanScheduleEmailNotifier(
         self.__recipients = recipients
         self.__subject = subject
 
-    async def notify(self, item: tuple[Schedule.DayUpdate, ...]) -> None:
+    async def notify(self, item: Schedule.DayUpdates) -> None:
         new_dates = [
             self.__format_day(day_update)
             for day_update in item

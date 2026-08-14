@@ -9,7 +9,7 @@ from storm_brandeis.primitives import (
     ParserPrimitives,
 )
 
-from .ScheduleCheck import ScheduleCheck
+from .ScheduleChecker import ScheduleChecker
 
 
 class AvailabilityMonitor[UnparsedSchedule, ParsedSchedule, ScheduleUpdate]:
@@ -23,8 +23,8 @@ class AvailabilityMonitor[UnparsedSchedule, ParsedSchedule, ScheduleUpdate]:
     ):
         self.__fetcher = fetcher
         self.__parser = parser
-        self.__schedule_check = ScheduleCheck(
-            snapshot_storer, differencer, notifier
+        self.__schedule_check = ScheduleChecker(
+            snapshot_storer, differencer, notifier, lambda _: True
         )
 
     async def run(self):

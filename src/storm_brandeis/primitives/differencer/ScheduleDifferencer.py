@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+__all__ = ("ScheduleDifferencer",)
+
 from datetime import datetime
 from storm_brandeis.models import Schedule
 
@@ -8,15 +10,13 @@ from .DifferencerPrimitives import DifferencerPrimitives
 
 
 class ScheduleDifferencer(
-    DifferencerPrimitives[
-        tuple[Schedule.Day, ...], tuple[Schedule.DayUpdate, ...]
-    ]
+    DifferencerPrimitives[Schedule.Days, Schedule.DayUpdates]
 ):
     @staticmethod
     def difference(
-        old_item: tuple[Schedule.Day, ...],
-        new_item: tuple[Schedule.Day, ...],
-    ) -> tuple[Schedule.DayUpdate, ...]:
+        old_item: Schedule.Days,
+        new_item: Schedule.Days,
+    ) -> Schedule.DayUpdates:
         old_days = ScheduleDifferencer.__tuple_days_to_dict(old_item)
         new_days = ScheduleDifferencer.__tuple_days_to_dict(new_item)
 
@@ -51,19 +51,19 @@ class ScheduleDifferencer(
 
     @staticmethod
     def __tuple_days_to_dict(
-        days: tuple[Schedule.Day, ...]
-    ) -> dict[str, tuple[Schedule.Slot, ...]]:
+        days: Schedule.Days
+    ) -> dict[str, tuple[Schedule.Day.Slot, ...]]:
         return {_day.date: _day.slots for _day in days}
 
     @staticmethod
     def __tuple_slots_to_dict(
-        slots: tuple[Schedule.Slot, ...]
-    ) -> dict[tuple[datetime, int], Schedule.Slot]:
+        slots: tuple[Schedule.Day.Slot, ...]
+    ) -> dict[tuple[datetime, int], Schedule.Day.Slot]:
         return {(slot.start_time, slot.court): slot for slot in slots}
 
     @staticmethod
     def __slot_difference(
-        old: Schedule.Slot | None, new: Schedule.Slot
+        old: Schedule.Day.Slot | None, new: Schedule.Day.Slot
     ) -> Schedule.Update | None:
         Change = Schedule.Update.Change
 

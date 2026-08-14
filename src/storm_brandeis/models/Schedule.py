@@ -3,37 +3,35 @@
 
 __all__ = ("Schedule",)
 
-from tagged_enum import TaggedEnum
-
-from dataclasses import dataclass
+from typing import NamedTuple
 
 from datetime import datetime
 
+from tagged_enum import TaggedEnum
+
 
 class Schedule:
-    @dataclass(frozen=True)
-    class Slot:
-        start_time: datetime
-        court: int
-        open_slots: int | None
-
-    @dataclass(frozen=True)
-    class Day:
+    class Day(NamedTuple):
+        class Slot(NamedTuple):
+            start_time: datetime
+            court: int
+            open_slots: int | None
         date: str
-        slots: tuple["Schedule.Slot", ...]
+        slots: tuple[Slot, ...]
 
-    @dataclass(frozen=True)
-    class Update:
+    class Update(NamedTuple):
         class Change(TaggedEnum):
             INCREASE = int | None
             DECREASE = int | None
             NO_CHANGE = int | None
 
-        updated_slot: "Schedule.Slot"
+        updated_slot: "Schedule.Day.Slot"
         slot_change: Change
 
-    @dataclass(frozen=True)
-    class DayUpdate:
+    class DayUpdate(NamedTuple):
         date: str
         updates: tuple["Schedule.Update", ...]
         new_date: bool = False
+
+    Days = tuple[Day, ...]
+    DayUpdates = tuple[DayUpdate, ...]

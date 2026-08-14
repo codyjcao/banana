@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+__all__ = ("NyUrbanScheduleParser",)
+
 from collections import defaultdict
 from datetime import datetime
 import re
@@ -12,14 +14,14 @@ from storm_brandeis.models import Schedule
 from .ParserPrimitives import ParserPrimitives
 
 
-class NyUrbanScheduleParser(ParserPrimitives[str, list[Schedule.Day]]):
+class NyUrbanScheduleParser(ParserPrimitives[str, Schedule.Days]):
     TIME_FORMAT = "%I:%M %p"
 
     @staticmethod
-    def parse(raw: str) -> list[Schedule.Day]:
+    def parse(raw: str) -> Schedule.Days:
         soup = BeautifulSoup(raw, "html.parser")
 
-        slots_by_day: dict[str, list[Schedule.Slot]] = defaultdict(list)
+        slots_by_day: dict[str, list[Schedule.Day.Slot]] = defaultdict(list)
 
         for row in soup.select("tr"):
             checkbox = row.select_one("input[name='f_GameID']")
@@ -45,7 +47,7 @@ class NyUrbanScheduleParser(ParserPrimitives[str, list[Schedule.Day]]):
             )
 
             slots_by_day[day].append(
-                Schedule.Slot(
+                Schedule.Day.Slot(
                     start_time=start_time,
                     court=NyUrbanScheduleParser._parse_court(level),
                     open_slots=NyUrbanScheduleParser._parse_open_slots(
@@ -54,7 +56,7 @@ class NyUrbanScheduleParser(ParserPrimitives[str, list[Schedule.Day]]):
                 )
             )
 
-        return [
+        return tuple(
             Schedule.Day(
                 date=day,
                 slots=tuple(
@@ -68,8 +70,8 @@ class NyUrbanScheduleParser(ParserPrimitives[str, list[Schedule.Day]]):
                 ),
             )
             for day, slots in slots_by_day.items()
-        ]
-    
+        )
+
     @staticmethod
     def _parse_day(value: str) -> str:
         # "Sun 10/25" -> "10/25"

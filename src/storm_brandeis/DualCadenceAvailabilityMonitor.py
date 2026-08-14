@@ -7,8 +7,8 @@ import asyncio
 
 from storm_brandeis.primitives import FetcherPrimitives, ParserPrimitives
 
-from .DailyRolloverTracker import DailyRolloverTracker
-from .ScheduleCheck import ScheduleCheck
+from .RolloverTracker import RolloverTracker
+from .ScheduleChecker import ScheduleChecker
 
 
 class DualCadenceAvailabilityMonitor[
@@ -18,19 +18,19 @@ class DualCadenceAvailabilityMonitor[
         self,
         fetcher: FetcherPrimitives[UnparsedSchedule],
         parser: ParserPrimitives[UnparsedSchedule, ParsedSchedule],
-        fast_check: ScheduleCheck[ParsedSchedule, ScheduleUpdate],
-        daily_check: ScheduleCheck[ParsedSchedule, ScheduleUpdate],
-        daily_rollover_tracker: DailyRolloverTracker,
+        fast_check: ScheduleChecker[ParsedSchedule, ScheduleUpdate],
+        daily_check: ScheduleChecker[ParsedSchedule, ScheduleUpdate],
+        rollover_tracker: RolloverTracker,
         poll_interval_seconds: float,
     ):
         self.__fetcher = fetcher
         self.__parser = parser
         self.__fast_check = fast_check
         self.__daily_check = daily_check
-        self.__daily_rollover_tracker = daily_rollover_tracker
+        self.__rollover_tracker = rollover_tracker
         self.__poll_interval_seconds = poll_interval_seconds
 
-    async def run_forever(self) -> None:
+    async def run(self) -> None:
         while True:
             await self.__tick()
             await asyncio.sleep(self.__poll_interval_seconds)
@@ -41,6 +41,6 @@ class DualCadenceAvailabilityMonitor[
 
         await self.__fast_check.check(parsed)
 
-        if await self.__daily_rollover_tracker.has_rolled_over():
+        if await self.__rollover_tracker.has_rolled_over():
             await self.__daily_check.check(parsed)
-            await self.__daily_rollover_tracker.mark_run()
+            await self.__rollover_tracker.mark_run()

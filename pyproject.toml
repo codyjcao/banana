@@ -9,3 +9,12 @@ dependencies = [
     "requests>=2.34.2",
     "tagged-enum>=1.0.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
