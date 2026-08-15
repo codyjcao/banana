@@ -34,4 +34,5 @@ disable = [
     "invalid-enum-extension",
     "protected-access",
     "trailing-whitespace",
+    "missing-final-newline",
 ]

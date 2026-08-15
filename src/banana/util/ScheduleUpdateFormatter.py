@@ -52,3 +52,5 @@ class ScheduleUpdateFormatter:
                 )
             case Change.NO_CHANGE:
                 return "now open"
+            case _:
+                raise ValueError(f"{change} is not a valid change type.")
