@@ -63,31 +63,3 @@ class RecordingNotifier(Generic[Item]):
 
     async def notify(self, item: Item) -> None:
         self.notifications.append(item)
-
-
-class ConstantDifferencer(Generic[Item]):
-    """A differencer that ignores its inputs and always reports the
-    same difference, for isolating ScheduleChecker's own control flow
-    from real diffing logic."""
-
-    def __init__(self, difference: Item):
-        self.__difference = difference
-
-    def difference(self, old_item, new_item) -> Item:
-        return self.__difference
-
-
-class ManualRolloverTracker:
-    """A rollover tracker whose answer is set directly by the test,
-    for isolating DualCadenceAvailabilityMonitor's branching from real
-    interval/clock logic."""
-
-    def __init__(self, rolled_over: bool = False):
-        self.rolled_over = rolled_over
-        self.mark_run_calls = 0
-
-    async def has_rolled_over(self) -> bool:
-        return self.rolled_over
-
-    async def mark_run(self) -> None:
-        self.mark_run_calls += 1

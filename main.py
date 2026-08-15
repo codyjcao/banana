@@ -2,26 +2,19 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-import datetime
 import logging
 import os
 
 from dotenv import load_dotenv
 
-from banana import (
-    DualCadenceAvailabilityMonitor,
-    RolloverTracker,
-    ScheduleChecker,    
-)
 from banana.models import Schedule
+from banana.monitors import NyUrbanAvailabilityMonitor
+from banana.util import ScheduleUpdateFormatter
 from banana.primitives import (
-    NyUrbanScheduleEmailNotifier,
     InMemorySnapshotStorer,
-    NyUrbanScheduleParser,
-    ScheduleDifferencer,
-    RequestsFetcher,
+    SchedulePolicy,
+    EmailNotifier,
 )
-
 
 async def main():
     load_dotenv()
@@ -36,62 +29,19 @@ async def main():
     if email is None or password is None:
         raise ValueError("Email or password is missing")
 
-    fetcher = RequestsFetcher(
-        "https://www.nyurban.com/wp-admin/admin-ajax.php",
-        {
-            "action": "my_open_play_contentbb",
-            "buttonid": 6,
-            "gametypeid": 1,
-            "filterid": 18,
-        }
-    )
-    fast_store = InMemorySnapshotStorer[Schedule.Days]()
-    daily_store = InMemorySnapshotStorer[Schedule.Days]()
-    parser = NyUrbanScheduleParser()
-    differencer = ScheduleDifferencer()
-    email_notifier_fast = NyUrbanScheduleEmailNotifier(
+    notifier = EmailNotifier(
         sender=email,
         password=password,
-        recipients=["codyjcao@gmail.com", "qlee97@gmail.com"],
-        subject="NYUrban Brandeis New Date Drop"
-    )
-    email_notifier_daily = NyUrbanScheduleEmailNotifier(
-        sender=email,
-        password=password,
-        recipients=["codyjcao@gmail.com", "qlee97@gmail.com"],
-        subject="NYUrban Brandeis Daily Update"
+        recipients=["codyjcao@gmail.com","qlee97@gmail.com"],
+        subject="Bi-Daily Brandeis Open Play Notification Email"
     )
 
-    fast_check = ScheduleChecker[Schedule.Days, Schedule.DayUpdates](
-        snapshot_storer=fast_store,
-        differencer=differencer,
-        notifier=email_notifier_fast,
-        predicate=lambda updates: any(day.new_date for day in updates),
-        name="new-date check",
-    )
+    formatter = ScheduleUpdateFormatter()
 
-    daily_check = ScheduleChecker[Schedule.Days, Schedule.DayUpdates](
-        snapshot_storer=daily_store,
-        differencer=differencer,
-        notifier=email_notifier_daily,
-        predicate=lambda _: True,
-        name="daily check",
-    )
-
-    monitor = DualCadenceAvailabilityMonitor[
-        str,
-        Schedule.Days,
-        Schedule.DayUpdates,
-    ](
-        fast_check=fast_check,
-        daily_check=daily_check,
-        fetcher=fetcher,
-        parser=parser,
-        rollover_tracker=RolloverTracker(
-            InMemorySnapshotStorer[datetime.datetime](),
-            interval=datetime.timedelta(days=1)
-        ),
-        poll_interval_seconds=60*60*6
+    monitor = NyUrbanAvailabilityMonitor(
+        snapshot_storer=InMemorySnapshotStorer[Schedule.Days](),
+        policy=SchedulePolicy(formatter=formatter.format_day_updates),
+        notifier=notifier,
     )
 
     await monitor.run()
