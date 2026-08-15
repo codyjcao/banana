@@ -23,8 +23,8 @@ async def main():
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
 
-    email = os.getenv("EMAIL_NAME")
-    password = os.getenv("EMAIL_PASSWORD")
+    email = os.environ["EMAIL_NAME"]
+    password = os.environ["EMAIL_PASSWORD"]
 
     if email is None or password is None:
         raise ValueError("Email or password is missing")
