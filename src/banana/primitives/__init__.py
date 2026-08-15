@@ -6,3 +6,4 @@ from .fetcher import *
 from .notifier import *
 from .parser import *
 from .snapshot_storer import *
+from .policy import *
