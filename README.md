@@ -9,12 +9,11 @@ On each polling cycle, Banana:
 1. requests the Brandeis schedule from NY Urban;
 2. parses each session into a date, start time, court, and availability;
 3. compares the result with an in-memory snapshot; and
-4. sends a Gmail notification when a configured check finds a relevant change.
+4. sends an email from whichever email specified in `.env`.
 
-The application in [`main.py`](main.py) uses two independent checks:
+The application in [`main.py`](main.py) uses just one check:
 
-- **New-date check:** runs on every poll and only emails when a new schedule date appears.
-- **Daily check:** runs approximately once every 24 hours and emails a summary of any changes since its previous run.
+- **Quarter-Daily Check** runs on every poll and emails when there are any changes (slots opening/closing, new dates added). Future work may involve specific court/time/day filters.
 
 The first run establishes a baseline and does not send a change notification. By default, the schedule is polled every six hours.
 
@@ -104,7 +103,6 @@ The components under `primitives/` use small protocols, so fetching, parsing, pe
 
 - Recipient addresses and polling settings are configured in code rather than through environment variables.
 - Snapshots are not persisted across process restarts.
-- Email delivery is Gmail-specific.
 - The parser depends on the current structure and wording of NY Urban's schedule HTML.
 
 This project is an independent utility and is not affiliated with NY Urban.
