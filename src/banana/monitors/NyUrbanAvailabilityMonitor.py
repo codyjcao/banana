@@ -38,7 +38,7 @@ class NyUrbanAvailabilityMonitor(
         snapshot_storer: SnapshotStorerPrimitives[Schedule.Days],
         policy: PolicyPrimitives[Schedule.DayUpdates, str],
         notifier: NotifierPrimitives[str],
-        polling_interval_seconds: int = 60 * 60 * 12,
+        polling_interval_seconds: int = 60 * 60 * 6,
         url: str = _URL,
         payload: OpenPlaySession = OpenPlaySession.BRANDEIS_SUNDAY,
     ):

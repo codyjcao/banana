@@ -33,7 +33,7 @@ async def main():
         sender=email,
         password=password,
         recipients=["codyjcao@gmail.com","qlee97@gmail.com"],
-        subject="Bi-Daily Brandeis Open Play Notification Email"
+        subject="Brandeis Open Play Notification Email"
     )
 
     formatter = ScheduleUpdateFormatter()

@@ -6,12 +6,16 @@ __all__ = ("NyUrbanScheduleParser",)
 from collections import defaultdict
 from datetime import datetime
 import re
+import logging
 
 from bs4 import BeautifulSoup
 
 from banana.models import Schedule
 
 from .ParserPrimitives import ParserPrimitives
+
+
+logger = logging.getLogger(__name__)
 
 
 class NyUrbanScheduleParser(ParserPrimitives[str, Schedule.Days]):
@@ -55,6 +59,8 @@ class NyUrbanScheduleParser(ParserPrimitives[str, Schedule.Days]):
                     ),
                 )
             )
+        
+        logger.info(f"Parsed and found {len(slots_by_day)} days")
 
         return tuple(
             Schedule.Day(
