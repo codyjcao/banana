@@ -4,6 +4,7 @@
 __all__ = ("AvailabilityMonitor",)
 
 import asyncio
+import logging
 
 from banana.primitives import (
     SnapshotStorerPrimitives,
@@ -15,8 +16,12 @@ from banana.primitives import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 class AvailabilityMonitor[
-    UnparsedSchedule, ParsedSchedule, ScheduleUpdate, Notification]:
+    UnparsedSchedule, ParsedSchedule, ScheduleUpdate, Notification
+]:
     def __init__(
         self,
         fetcher: FetcherPrimitives[UnparsedSchedule],
@@ -39,18 +44,25 @@ class AvailabilityMonitor[
         unparsed = await self.__fetcher.fetch()
         parsed = self.__parser.parse(unparsed)
 
+        logger.info("Loading snapshot...")
         old = await self.__snapshot_storer.load()
+        logger.info("Snapshot loaded...")
+
+        logger.info("Saving new snapshot...")
         await self.__snapshot_storer.save(parsed)
+        logger.info("Snapshot saved...")
 
         if old is None:
-            # no benchmark exists so establish and skip this loop
+            logger.info("No old snapshot exists, establishing baseline...")
             return
         
         update = self.__differencer.difference(old, parsed)
         
+        logger.info("Evaluating difference...")
         notification = await self.__policy.evaluate(update)
 
         if notification is not None:
+            logger.info("Sending notification...")
             await self.__notifier.notify(notification)
 
 

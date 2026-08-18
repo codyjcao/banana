@@ -35,4 +35,5 @@ disable = [
     "protected-access",
     "trailing-whitespace",
     "missing-final-newline",
+    "logging-fstring-interpolation",
 ]
