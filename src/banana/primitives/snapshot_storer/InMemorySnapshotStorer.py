@@ -3,7 +3,12 @@
 
 __all__ = ("InMemorySnapshotStorer",)
 
+import logging
+
 from .SnapshotStorerPrimitives import SnapshotStorerPrimitives
+
+
+logger = logging.getLogger(__name__)
 
 
 class InMemorySnapshotStorer[Item](SnapshotStorerPrimitives[Item]):
@@ -11,6 +16,8 @@ class InMemorySnapshotStorer[Item](SnapshotStorerPrimitives[Item]):
         self.__snapshot = snapshot
 
     async def load(self) -> Item | None:
+        if self.__snapshot:
+            logger.info("No snapshot stored...")
         return self.__snapshot
     
     async def save(self, item: Item) -> None:

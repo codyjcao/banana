@@ -16,6 +16,7 @@ from banana.primitives import (
     EmailNotifier,
 )
 
+
 async def main():
     load_dotenv()
     logging.basicConfig(

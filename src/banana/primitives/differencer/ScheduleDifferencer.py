@@ -3,10 +3,15 @@
 
 __all__ = ("ScheduleDifferencer",)
 
+import logging
 from datetime import datetime
+
 from banana.models import Schedule
 
 from .DifferencerPrimitives import DifferencerPrimitives
+
+
+logger = logging.getLogger(__name__)
 
 
 class ScheduleDifferencer(
@@ -47,6 +52,7 @@ class ScheduleDifferencer(
                     )
                 )
 
+        logger.info(f"{len(day_updates)} updates found...")
         return tuple(day_updates)
 
     @staticmethod

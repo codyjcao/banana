@@ -64,6 +64,8 @@ class AvailabilityMonitor[
         if notification is not None:
             logger.info("Sending notification...")
             await self.__notifier.notify(notification)
+        else:
+            logger.info("Policy not met, no notification generated...")
 
 
     async def run(self):
