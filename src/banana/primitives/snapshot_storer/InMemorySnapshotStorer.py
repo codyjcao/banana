@@ -16,7 +16,7 @@ class InMemorySnapshotStorer[Item](SnapshotStorerPrimitives[Item]):
         self.__snapshot = snapshot
 
     async def load(self) -> Item | None:
-        if self.__snapshot:
+        if self.__snapshot is None:
             logger.info("No snapshot stored...")
         return self.__snapshot
     
