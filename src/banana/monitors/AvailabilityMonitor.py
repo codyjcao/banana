@@ -67,8 +67,9 @@ class AvailabilityMonitor[
         else:
             logger.info("Policy not met, no notification generated...")
 
-
     async def run(self):
         while True:
             await self.__tick()
+            hours = self.__polling_interval//3600
+            logger.info(f"Tick completed, sleeping for {hours} hours")
             await asyncio.sleep(self.__polling_interval)
