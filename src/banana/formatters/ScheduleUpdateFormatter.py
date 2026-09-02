@@ -4,13 +4,14 @@
 __all__ = ("ScheduleUpdateFormatter",)
 
 from banana.models import Schedule
+from banana.protocols import StringFormatter
 
 
-class ScheduleUpdateFormatter:
+class ScheduleUpdateFormatter(StringFormatter[Schedule.DayUpdates]):
     @staticmethod
-    def format_day_updates(day_updates: Schedule.DayUpdates) -> str:
+    def format(item: Schedule.DayUpdates) -> str:
         formatted = "\n\n".join(
-            ScheduleUpdateFormatter.__format_day(day) for day in day_updates
+            ScheduleUpdateFormatter.__format_day(day) for day in item
         )
         return formatted
 
