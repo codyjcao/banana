@@ -5,23 +5,20 @@ __all__ = ("OpenSlotMonitor",)
 
 from typing import Protocol
 import logging
-import asyncio
 
 from banana.models import Schedule
+from banana.protocols import AsyncRunnable
 from banana.primitives import (
     FetcherPrimitives,
-    PolicyPrimitives,
     ParserPrimitives,
 )
-
-from .AbstractMonitor import AbstractMonitor
 
 logger = logging.getLogger(__name__)
 
 
-class OpenSlotMonitor(AbstractMonitor):
+class OpenSlotMonitor(AsyncRunnable):
     class Delegate(Protocol):
-        async def passed_evaluation(
+        async def on_schedule(
             self, schedule: Schedule.Days
         ): ...
 
@@ -29,35 +26,17 @@ class OpenSlotMonitor(AbstractMonitor):
         self,
         fetcher: FetcherPrimitives[str],
         parser: ParserPrimitives[str, Schedule.Days],
-        policy: PolicyPrimitives[Schedule.Days, str],
         delegate: Delegate,
-        polling_interval_seconds: int = 60*60*12,
     ):
-        if polling_interval_seconds <= 60:
-            raise ValueError("Polling interval is too short...")
-
         self.__fetcher = fetcher
         self.__parser = parser
-        self.__policy = policy
-        self.__polling_interval_sceonds = polling_interval_seconds
         self.__delegate = delegate
 
-    async def __tick(self) -> None:
+    async def run(self) -> None:
         logger.info("Fetching schedule...")
         unparsed = await self.__fetcher.fetch()
 
         logger.info("Parsing schedule...")
         parsed = self.__parser.parse(unparsed)
 
-        logger.info("Evaluating parsed schedule...")
-        evaluation = await self.__policy.evaluate(parsed)
-
-        if evaluation:
-            logger.info("Evaluation passed... activating delegate 😎")
-            await self.__delegate.passed_evaluation(parsed)
-
-
-    async def monitor(self) -> None:
-        while True:
-            await self.__tick()
-            await asyncio.sleep(self.__polling_interval_sceonds)
+        await self.__delegate.on_schedule(parsed)

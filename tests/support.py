@@ -48,18 +48,27 @@ class SequenceFetcher(Generic[Item]):
         return item
 
 
-class IdentityParser(Generic[Item]):
-    """A parser for tests where the fetcher already produces the
-    "parsed" shape, so no real translation is needed."""
+class MappingParser(Generic[Item]):
+    def __init__(self, parsed_by_raw_value: dict[str, Item]):
+        self.__parsed_by_raw_value = parsed_by_raw_value
 
-    @staticmethod
-    def parse(raw: Item) -> Item:
-        return raw
+    def parse(self, raw: str) -> Item:
+        return self.__parsed_by_raw_value[raw]
 
 
-class RecordingNotifier(Generic[Item]):
+class RecordingUpdateDelegate:
     def __init__(self):
-        self.notifications: list[Item] = []
+        self.calls: list[tuple[Schedule.DayUpdates, Schedule.Days]] = []
 
-    async def notify(self, item: Item) -> None:
-        self.notifications.append(item)
+    async def on_update(
+        self, updates: Schedule.DayUpdates, schedule: Schedule.Days
+    ) -> None:
+        self.calls.append((updates, schedule))
+
+
+class RecordingScheduleDelegate:
+    def __init__(self):
+        self.schedules: list[Schedule.Days] = []
+
+    async def on_schedule(self, schedule: Schedule.Days) -> None:
+        self.schedules.append(schedule)

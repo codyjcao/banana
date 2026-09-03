@@ -6,5 +6,5 @@ __all__ = ("PolicyPrimitives",)
 from typing import Protocol
 
 
-class PolicyPrimitives[Item, Result](Protocol):
-    async def evaluate(self, item: Item) -> Result | None: ...
+class PolicyPrimitives[Item](Protocol):
+    async def evaluate(self, item: Item) -> bool: ...

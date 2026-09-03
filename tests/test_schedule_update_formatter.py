@@ -4,7 +4,7 @@
 from datetime import datetime
 
 from banana.models import Schedule
-from banana.util.ScheduleUpdateFormatter import ScheduleUpdateFormatter
+from banana.formatters.ScheduleUpdateFormatter import ScheduleUpdateFormatter
 
 from .support import make_slot
 
@@ -40,7 +40,7 @@ def test_formats_day_updates_grouped_by_date():
         ),
     )
 
-    assert ScheduleUpdateFormatter.format_day_updates(day_updates) == (
+    assert ScheduleUpdateFormatter.format(day_updates) == (
         "1/1\n"
         "  Court 1 @ 08:30 PM: +2 spots\n"
         "  Court 2 @ 08:30 PM: -1 spots\n\n"
@@ -61,7 +61,7 @@ def test_formats_unknown_increase_and_decrease_magnitudes():
         ),
     )
 
-    assert ScheduleUpdateFormatter.format_day_updates(day_updates) == (
+    assert ScheduleUpdateFormatter.format(day_updates) == (
         "1/1\n"
         "  Court 1 @ 08:30 PM: more spots opened up\n"
         "  Court 2 @ 08:30 PM: fewer spots available"

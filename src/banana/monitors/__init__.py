@@ -3,4 +3,3 @@
 
 from .CustomUpdateMonitor import *
 from .OpenSlotMonitor import *
-from .AbstractMonitor import *

@@ -2,3 +2,4 @@
 # -*- coding: utf-8 -*-
 
 from .StringFormatter import *
+from .AsyncRunnable import *
