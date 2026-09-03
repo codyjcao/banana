@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__all__ = ("OpenSlotMonitor",)
+__all__ = ("ScheduleCheck",)
 
 from typing import Protocol
 import logging
@@ -16,11 +16,9 @@ from banana.primitives import (
 logger = logging.getLogger(__name__)
 
 
-class OpenSlotMonitor(AsyncRunnable):
+class ScheduleCheck(AsyncRunnable):
     class Delegate(Protocol):
-        async def on_schedule(
-            self, schedule: Schedule.Days
-        ): ...
+        async def on_schedule(self, schedule: Schedule.Days): ...
 
     def __init__(
         self,

@@ -3,7 +3,7 @@
 
 import asyncio
 
-from banana.monitors.OpenSlotMonitor import OpenSlotMonitor
+from banana.checks.ScheduleCheck import ScheduleCheck
 
 from .support import (
     MappingParser,
@@ -17,12 +17,12 @@ from .support import (
 def test_run_fetches_parses_and_forwards_schedule():
     schedule = (make_day("1/1", make_slot(1, 2)),)
     delegate = RecordingScheduleDelegate()
-    monitor = OpenSlotMonitor(
+    check = ScheduleCheck(
         fetcher=SequenceFetcher(["raw schedule"]),
         parser=MappingParser({"raw schedule": schedule}),
         delegate=delegate,
     )
 
-    asyncio.run(monitor.run())
+    asyncio.run(check.run())
 
     assert delegate.schedules == [schedule]

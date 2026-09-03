@@ -4,7 +4,7 @@
 import asyncio
 
 from banana.models import Schedule
-from banana.monitors.CustomUpdateMonitor import CustomUpdateMonitor
+from banana.checks.ScheduleUpdateCheck import ScheduleUpdateCheck
 from banana.primitives.differencer.ScheduleDifferencer import (
     ScheduleDifferencer,
 )
@@ -22,8 +22,8 @@ from .support import (
 )
 
 
-def _run(monitor: CustomUpdateMonitor) -> None:
-    asyncio.run(monitor.run())
+def _run(check: ScheduleUpdateCheck) -> None:
+    asyncio.run(check.run())
 
 
 def _build_monitor(schedules, policy=None, snapshot_storer=None):
@@ -31,7 +31,7 @@ def _build_monitor(schedules, policy=None, snapshot_storer=None):
     parser = MappingParser(dict(zip(raw_values, schedules, strict=True)))
     delegate = RecordingUpdateDelegate()
     storer = snapshot_storer or InMemorySnapshotStorer[Schedule.Days]()
-    monitor = CustomUpdateMonitor(
+    check = ScheduleUpdateCheck(
         fetcher=SequenceFetcher(raw_values),
         parser=parser,
         snapshot_storer=storer,
@@ -39,14 +39,14 @@ def _build_monitor(schedules, policy=None, snapshot_storer=None):
         policy=policy or SchedulePolicy(),
         delegate=delegate,
     )
-    return monitor, delegate, storer
+    return check, delegate, storer
 
 
 def test_first_run_saves_baseline_without_calling_delegate():
     schedule = (make_day("1/1", make_slot(1, 2)),)
-    monitor, delegate, storer = _build_monitor([schedule])
+    check, delegate, storer = _build_monitor([schedule])
 
-    _run(monitor)
+    _run(check)
 
     assert delegate.calls == []
     assert asyncio.run(storer.load()) == schedule
@@ -57,10 +57,10 @@ def test_accepted_update_is_forwarded_with_latest_schedule():
         (make_day("1/1", make_slot(1, 2)),),
         (make_day("1/1", make_slot(1, 4)),),
     ]
-    monitor, delegate, _ = _build_monitor(schedules)
+    check, delegate, _ = _build_monitor(schedules)
 
-    _run(monitor)
-    _run(monitor)
+    _run(check)
+    _run(check)
 
     [(updates, schedule)] = delegate.calls
     (day_update,) = updates
@@ -71,9 +71,9 @@ def test_accepted_update_is_forwarded_with_latest_schedule():
     assert update.slot_change == Schedule.Update.Change.INCREASE(2)
 
 
-def test_rejected_update_does_not_call_delegate():
+def test_rejected_update_calls_no_update_delegate_method():
     policy = SchedulePolicy(predicate=lambda _: False)
-    monitor, delegate, _ = _build_monitor(
+    check, delegate, _ = _build_monitor(
         [
             (make_day("1/1", make_slot(1, 2)),),
             (make_day("1/1", make_slot(1, 4)),),
@@ -81,10 +81,13 @@ def test_rejected_update_does_not_call_delegate():
         policy=policy,
     )
 
-    _run(monitor)
-    _run(monitor)
+    _run(check)
+    _run(check)
 
     assert delegate.calls == []
+    assert delegate.no_update_schedules == [
+        (make_day("1/1", make_slot(1, 4)),)
+    ]
 
 
 def test_policy_can_select_new_dates_only():
@@ -98,10 +101,10 @@ def test_policy_can_select_new_dates_only():
             make_day("1/2", make_slot(1, 1)),
         ),
     ]
-    monitor, delegate, _ = _build_monitor(schedules, policy=policy)
+    check, delegate, _ = _build_monitor(schedules, policy=policy)
 
-    _run(monitor)
-    _run(monitor)
+    _run(check)
+    _run(check)
 
     [(updates, schedule)] = delegate.calls
     assert schedule == schedules[-1]
@@ -116,9 +119,9 @@ def test_latest_schedule_is_saved_after_each_run():
         (make_day("1/1", make_slot(1, 2)),),
         (make_day("1/1", make_slot(1, 4)),),
     ]
-    monitor, _, _ = _build_monitor(schedules, snapshot_storer=storer)
+    check, _, _ = _build_monitor(schedules, snapshot_storer=storer)
 
-    _run(monitor)
-    _run(monitor)
+    _run(check)
+    _run(check)
 
     assert asyncio.run(storer.load()) == schedules[-1]

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__all__ = ("CustomUpdateMonitor", "OpenPlaySession",)
+__all__ = ("ScheduleUpdateCheck",)
 
 from typing import Protocol
 from enum import Enum
@@ -33,11 +33,13 @@ class OpenPlaySession(Enum):
     }
 
 
-class CustomUpdateMonitor(AsyncRunnable):
+class ScheduleUpdateCheck(AsyncRunnable):
     class Delegate(Protocol):
         async def on_update(
             self, updates: Schedule.DayUpdates, schedule: Schedule.Days
         ): ...
+
+        async def on_no_update(self, schedule: Schedule.Days): ...
 
     def __init__(
         self,
@@ -70,14 +72,15 @@ class CustomUpdateMonitor(AsyncRunnable):
         if old is None:
             logger.info("No old snapshot exists, establishing baseline...")
             return
-        
+
         updates = self.__differencer.difference(old, parsed)
-        
+
         logger.info("Evaluating difference...")
         evaluation = await self.__policy.evaluate(updates)
 
         if evaluation:
-            logger.info("Evaluation passed... activating delegate 😎")
+            logger.info("Evaluation passed... activating delegate")
             await self.__delegate.on_update(updates, parsed)
         else:
             logger.info("Policy not met, no notification generated...")
+            await self.__delegate.on_no_update(parsed)

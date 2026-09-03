@@ -4,5 +4,6 @@
 from .formatters import *
 from .primitives import *
 from .protocols import *
-from .monitors import *
+from .checks import *
+from .runners import *
 from .models import *

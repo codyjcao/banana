@@ -59,11 +59,15 @@ class MappingParser(Generic[Item]):
 class RecordingUpdateDelegate:
     def __init__(self):
         self.calls: list[tuple[Schedule.DayUpdates, Schedule.Days]] = []
+        self.no_update_schedules: list[Schedule.Days] = []
 
     async def on_update(
         self, updates: Schedule.DayUpdates, schedule: Schedule.Days
     ) -> None:
         self.calls.append((updates, schedule))
+
+    async def on_no_update(self, schedule: Schedule.Days) -> None:
+        self.no_update_schedules.append(schedule)
 
 
 class RecordingScheduleDelegate:
