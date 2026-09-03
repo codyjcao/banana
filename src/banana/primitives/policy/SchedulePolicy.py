@@ -15,18 +15,16 @@ from .PolicyPrimitives import PolicyPrimitives
 logger = logging.getLogger(__name__)
 
 
-class SchedulePolicy(PolicyPrimitives[Schedule.DayUpdates, str]):
+class SchedulePolicy(PolicyPrimitives[Schedule.DayUpdates]):
     def __init__(
         self,
-        formatter: Callable[[Schedule.DayUpdates], str],
         predicate: Callable[[Schedule.DayUpdates], bool] = (
             lambda x: len(x) > 0
         ),
     ):
-        self.__formatter = formatter
         self.__predicate = predicate
 
-    async def evaluate(self, item: Schedule.DayUpdates) -> str | None:
+    async def evaluate(self, item: Schedule.DayUpdates) -> bool:
         now = datetime.datetime.now().strftime("%m/%d, %H:%M")
 
         if self.__predicate(item):
@@ -34,7 +32,7 @@ class SchedulePolicy(PolicyPrimitives[Schedule.DayUpdates, str]):
                 f"Predicate success for {len(item)} day updates on"
                 f" {now}"
             )
-            return self.__formatter(item)
+            return True
         
         logger.info(f"Predicate failed for {len(item)} updates on {now}")
-        return None
+        return False
