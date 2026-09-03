@@ -4,7 +4,6 @@
 __all__ = ("ScheduleUpdateCheck",)
 
 from typing import Protocol
-from enum import Enum
 import logging
 
 from banana.models import Schedule
@@ -18,28 +17,14 @@ from banana.primitives import (
 )
 
 
-_URL = "https://www.nyurban.com/wp-admin/admin-ajax.php"
-
-
 logger = logging.getLogger(__name__)
-
-
-class OpenPlaySession(Enum):
-    BRANDEIS_SUNDAY = {
-        "action": "my_open_play_contentbb",
-        "buttonid": 6,
-        "gametypeid": 1,
-        "filterid": 18,
-    }
 
 
 class ScheduleUpdateCheck(AsyncRunnable):
     class Delegate(Protocol):
         async def on_update(
-            self, updates: Schedule.DayUpdates, schedule: Schedule.Days
-        ): ...
-
-        async def on_no_update(self, schedule: Schedule.Days): ...
+            self, updates: Schedule.DayUpdates
+        ) -> None: ...
 
     def __init__(
         self,
@@ -79,8 +64,7 @@ class ScheduleUpdateCheck(AsyncRunnable):
         evaluation = await self.__policy.evaluate(updates)
 
         if evaluation:
-            logger.info("Evaluation passed... activating delegate")
-            await self.__delegate.on_update(updates, parsed)
+            logger.info("Evaluation passed... activating delegate... 🕴🏻")
+            await self.__delegate.on_update(updates)
         else:
             logger.info("Policy not met, no notification generated...")
-            await self.__delegate.on_no_update(parsed)

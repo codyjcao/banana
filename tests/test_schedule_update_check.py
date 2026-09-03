@@ -71,7 +71,7 @@ def test_accepted_update_is_forwarded_with_latest_schedule():
     assert update.slot_change == Schedule.Update.Change.INCREASE(2)
 
 
-def test_rejected_update_calls_no_update_delegate_method():
+def test_rejected_update_does_not_call_delegate():
     policy = SchedulePolicy(predicate=lambda _: False)
     check, delegate, _ = _build_monitor(
         [
@@ -85,9 +85,6 @@ def test_rejected_update_calls_no_update_delegate_method():
     _run(check)
 
     assert delegate.calls == []
-    assert delegate.no_update_schedules == [
-        (make_day("1/1", make_slot(1, 4)),)
-    ]
 
 
 def test_policy_can_select_new_dates_only():

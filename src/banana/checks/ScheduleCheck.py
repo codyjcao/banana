@@ -37,4 +37,5 @@ class ScheduleCheck(AsyncRunnable):
         logger.info("Parsing schedule...")
         parsed = self.__parser.parse(unparsed)
 
+        logger.info("Activating delegate... 🕴🏻")
         await self.__delegate.on_schedule(parsed)
